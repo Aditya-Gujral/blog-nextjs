@@ -1,45 +1,49 @@
-import { defineConfig } from "sanity";
-import { deskTool } from "sanity/desk";
-import { visionTool } from "@sanity/vision";
-import { schemaTypes } from "./lib/sanity/schemas";
-import {
-  projectId,
-  dataset,
-  previewSecretId
-} from "./lib/sanity/config";
-import settings from "./lib/sanity/schemas/settings";
-import {
-  pageStructure,
-  singletonPlugin
-} from "./lib/sanity/plugins/settings";
-import { unsplashImageAsset } from "sanity-plugin-asset-source-unsplash";
-import { table } from "@sanity/table";
-import { codeInput } from "@sanity/code-input";
+import { defineConfig } from 'sanity';
+import { deskTool } from 'sanity/desk';
+import { visionTool } from '@sanity/vision';
+import { schemaTypes } from './lib/sanity/schemas';
+import { projectId, dataset } from './lib/sanity/config';
+import settings from './lib/sanity/schemas/settings';
+import { pageStructure, singletonPlugin } from './lib/sanity/plugins/settings';
+import { unsplashImageAsset } from 'sanity-plugin-asset-source-unsplash';
+import { table } from '@sanity/table';
+import { codeInput } from '@sanity/code-input';
+import { InitialValueTemplateItem, DocumentActionComponent } from 'sanity'; // Import necessary types
 
-export const PREVIEWABLE_DOCUMENT_TYPES: string[] = ["post"];
-console.log(projectId);
+export const PREVIEWABLE_DOCUMENT_TYPES: string[] = ['post'];
 
 export default defineConfig({
-  name: "default",
-  title: "Stablo Template",
-  basePath: "/studio",
+  name: 'default',
+  title: 'Stablo Template',
+  basePath: '/insights/studio',
   projectId: projectId,
   dataset: dataset,
 
   plugins: [
     deskTool({
-      structure: pageStructure([settings])
-      // `defaultDocumentNode` is responsible for adding a “Preview” tab to the document pane
-      // defaultDocumentNode: previewDocumentNode({ apiVersion, previewSecretId }),
+      structure: pageStructure as any, // Ensure correct type casting if necessary
     }),
-    singletonPlugin(["settings"]),
+    singletonPlugin({
+      name: 'settings',
+      document: {
+        newDocumentOptions: (prev: InitialValueTemplateItem[], { creationContext }) => {
+          // Return the expected type
+          return prev as InitialValueTemplateItem[];
+        },
+        actions: (prev: DocumentActionComponent[], { schemaType }) => {
+          // Return the expected type
+          return prev as DocumentActionComponent[];
+        },
+      },
+    }),
     visionTool(),
     unsplashImageAsset(),
     table(),
-    codeInput()
+    codeInput(),
   ],
 
   schema: {
-    types: schemaTypes
-  }
+    types: schemaTypes,
+  },
 });
+
